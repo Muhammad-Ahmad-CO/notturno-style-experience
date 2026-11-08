@@ -16,6 +16,9 @@ body{background:#0d0505;color:var(--cream);font-family:'Inter',sans-serif;overfl
 @keyframes grain{
   0%,100%{transform:translate(0,0)} 20%{transform:translate(-3%,2%)}
   40%{transform:translate(2%,-3%)} 60%{transform:translate(-2%,-2%)} 80%{transform:translate(3%,3%)}}
+.halftone{position:fixed;inset:0;pointer-events:none;z-index:42;opacity:.16;mix-blend-mode:overlay;
+  background-image:radial-gradient(rgba(0,0,0,.85) 1px,transparent 1.6px);
+  background-size:5px 5px}
 
 /* ---------- header ---------- */
 .site-header{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;
@@ -34,9 +37,10 @@ body{background:#0d0505;color:var(--cream);font-family:'Inter',sans-serif;overfl
   display:flex;flex-direction:column;align-items:center;justify-content:center}
 .scene-img{position:absolute;inset:-12% 0;background-size:cover;background-position:center;
   transform:translateY(var(--p,0)) scale(1.08);will-change:transform;
+  filter:contrast(1.06) saturate(1.12);
   animation:kenburns 26s ease-in-out infinite alternate}
 .scene-img.slow{animation-duration:40s}
-.scene-img.dim{filter:brightness(.45) saturate(1.1)}
+.scene-img.dim{filter:brightness(.45) saturate(1.15) contrast(1.06)}
 @keyframes kenburns{from{scale:1}to{scale:1.07}}
 .scene::after{content:"";position:absolute;inset:0;pointer-events:none;
   background:linear-gradient(180deg,rgba(10,2,2,.45),transparent 30%,transparent 62%,rgba(10,2,2,.65))}
