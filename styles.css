@@ -70,6 +70,18 @@ body{background:#0d0505;color:var(--cream);font-family:'Inter',sans-serif;overfl
   animation:bob 1.8s ease-in-out infinite}
 @keyframes bob{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,8px)}}
 
+/* ---------- approach ---------- */
+.portal-glow{position:absolute;z-index:2;right:6%;top:4%;width:36vmin;height:36vmin;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,186,96,.5),rgba(200,41,36,.22) 55%,transparent 72%);
+  filter:blur(6px);pointer-events:none;animation:portalPulse 4.5s ease-in-out infinite}
+@keyframes portalPulse{0%,100%{opacity:.65;transform:scale(1)}50%{opacity:1;transform:scale(1.08)}}
+.approach-mist{position:absolute;inset:0;z-index:3;pointer-events:none;
+  background:
+    radial-gradient(ellipse 60% 22% at 22% 88%,rgba(243,241,233,.10),transparent 70%),
+    radial-gradient(ellipse 50% 18% at 82% 92%,rgba(200,41,36,.16),transparent 70%);
+  animation:mistDrift 18s ease-in-out infinite alternate}
+@keyframes mistDrift{from{transform:translateX(-2.5%);opacity:.8}to{transform:translateX(2.5%);opacity:1}}
+
 /* ---------- eyes lids ---------- */
 .lid{position:absolute;left:0;right:0;height:52%;z-index:3;background:#0a0202;
   transition:transform 1.6s cubic-bezier(.7,0,.3,1)}
