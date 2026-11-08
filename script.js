@@ -9,118 +9,136 @@
     if (A[key]) el.style.backgroundImage = "url(" + A[key] + ")";
   });
 
-  /* ================= scroll-driven stage engine =================
-     The stage is fixed; page scroll SCRUBS the experience, like the
-     reference site: scenes crossfade, the camera pushes in, captions
-     slide, and the eyelids open — all tied to scroll position.      */
   var scenes = Array.prototype.slice.call(document.querySelectorAll("#stage .panel"));
   var spacer = document.getElementById("spacer");
   var progress = document.getElementById("progress");
   var dotsNav = document.getElementById("dots");
-  var SEG = 0, VH = 0;
+  var SEG = 0;
 
+  function layout(){
+    SEG = Math.round(window.innerHeight * 1.3);
+    spacer.style.height = ((scenes.length - 1) * SEG + window.innerHeight) + "px";
+  }
+  layout();
+
+  /* dots */
   var dots = scenes.map(function(sc, i){
     var b = document.createElement("button");
     b.setAttribute("aria-label", "Go to scene " + (i + 1) + (sc.id ? " (" + sc.id + ")" : ""));
-    b.addEventListener("click", function(){
-      window.scrollTo({ top: i * SEG, behavior: "smooth" });
-    });
+    b.addEventListener("click", function(){ scrollToScene(i); });
     dotsNav.appendChild(b);
     return b;
   });
 
-  function layout(){
-    VH = window.innerHeight;
-    SEG = Math.round(VH * 1.3);
-    spacer.style.height = ((scenes.length - 1) * SEG + VH) + "px";
+  function setLive(idx){
+    scenes.forEach(function(sc, i){ sc.classList.toggle("live", i === idx); });
+    dots.forEach(function(b, i){ b.classList.toggle("on", i === idx); });
   }
-  layout();
+  function scrollToScene(i){
+    var y = i * SEG;
+    if (window.gsap && window.ScrollToPlugin){
+      gsap.to(window, { duration: 1.1, ease: "power2.inOut", scrollTo: { y: y, autoKill: false } });
+    } else {
+      window.scrollTo({ top: y, behavior: "smooth" });
+    }
+  }
 
-  function clamp(v, a, b){ return v < a ? a : (v > b ? b : v); }
-  function sstep(a, b, x){ var t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); }
-  function easeOut(t){ return 1 - Math.pow(1 - t, 3); }
+  /* ================= GSAP + ScrollTrigger engine =================
+     Per the official gsap-scrolltrigger skill: register the plugin
+     once, put ScrollTrigger on the top-level master timeline only,
+     scrub it across the spacer's scroll range. Each scene owns one
+     unit of timeline time: artwork push-in, crossfades, captions,
+     eyelids — all choreographed as tweens.                        */
+  if (window.gsap && window.ScrollTrigger){
+    gsap.registerPlugin(ScrollTrigger);
+    if (window.ScrollToPlugin) gsap.registerPlugin(ScrollToPlugin);
 
-  /* per-scene scrub targets */
-  var sceneData = scenes.map(function(sc){
-    return {
-      el: sc,
-      img: sc.querySelector(".scene-img"),
-      fades: Array.prototype.slice.call(sc.querySelectorAll(".caption, .scrub")),
-      lidTop: sc.querySelector(".lid-top"),
-      lidBottom: sc.querySelector(".lid-bottom"),
-      h1: sc.querySelector("h1"),
-      fadeOutEls: Array.prototype.slice.call(sc.querySelectorAll(".mantra, .tagline, .scroll-hint"))
-    };
-  });
-
-  var ticking = false;
-  function update(){
-    ticking = false;
-    var y = window.scrollY || 0;
-    var maxY = Math.max(1, (scenes.length - 1) * SEG);
-    if (progress) progress.style.width = (clamp(y / maxY, 0, 1) * 100).toFixed(2) + "%";
-    var best = -1, bestOp = 0;
-
-    sceneData.forEach(function(d, i){
-      var center = i * SEG;
-      var start = center - SEG / 2;
-      var lp = clamp((y - start) / SEG, 0, 1);           /* 0..1 through this scene */
-      var dist = Math.abs(y - center);
-      var op = clamp((SEG * 0.80 - dist) / (SEG * 0.38), 0, 1);
-      d.el.style.opacity = op.toFixed(3);
-      d.el.style.visibility = op <= 0.002 ? "hidden" : "visible";
-      d.el.style.zIndex = i + 1;
-      if (op > bestOp){ bestOp = op; best = i; }
-
-      /* camera push-in + drift on the artwork */
-      if (d.img){
-        var e = easeOut(lp);
-        d.img.style.transform =
-          "translateY(" + ((lp - 0.5) * -38).toFixed(1) + "px) scale(" + (1.26 - 0.20 * e).toFixed(3) + ")";
-      }
-      /* captions & blocks: scrub in, then out (last scene stays) */
-      var capO = sstep(0.16, 0.40, lp) * (i === sceneData.length - 1 ? 1 : 1 - sstep(0.84, 1.0, lp));
-      d.fades.forEach(function(el){
-        el.style.opacity = capO.toFixed(3);
-        var rot = el.classList.contains("caption") && el.parentElement.classList.contains("scene") ? "" :
-                  (el.classList.contains("caption") ? " rotate(-1.2deg)" : "");
-        el.style.transform = "translateY(" + ((1 - capO) * 30).toFixed(1) + "px)" + rot;
-      });
-      /* eyelids scrub open with scroll */
-      if (d.lidTop && d.lidBottom){
-        var open = sstep(0.10, 0.62, lp);
-        d.lidTop.style.transform = "scaleY(" + (1 - open).toFixed(3) + ")";
-        d.lidBottom.style.transform = "scaleY(" + (1 - open).toFixed(3) + ")";
-      }
-      /* intro title: slow zoom, fades as you leave */
-      if (d.h1){
-        d.h1.style.transform = "scale(" + (1 + lp * 0.08).toFixed(3) + ")";
-        d.h1.style.opacity = (1 - sstep(0.55, 0.97, lp)).toFixed(3);
-        d.fadeOutEls.forEach(function(el){
-          el.style.opacity = (1 - sstep(0.10, 0.45, lp)).toFixed(3);
-        });
+    var N = scenes.length;
+    var master = gsap.timeline({
+      defaults: { ease: "none" },
+      scrollTrigger: {
+        trigger: spacer,
+        start: "top top",
+        end: "bottom bottom",
+        scrub: 0.6,
+        onUpdate: function(self){
+          if (progress) progress.style.width = (self.progress * 100).toFixed(2) + "%";
+          var idx = Math.min(N - 1, Math.floor(self.progress * N + 0.0001));
+          /* active scene = the one whose segment the playhead sits in */
+          idx = Math.min(N - 1, Math.max(0, Math.round(master.time() - 0.5)));
+          setLive(idx);
+        }
       }
     });
 
-    scenes.forEach(function(sc, i){ sc.classList.toggle("live", i === best && bestOp > 0.55); });
-    dots.forEach(function(b, i){ b.classList.toggle("on", i === best); });
+    scenes.forEach(function(sc, i){
+      var img = sc.querySelector(".scene-img");
+      var fades = sc.querySelectorAll(".caption, .scrub");
+      var isFirst = i === 0, isLast = i === N - 1;
+
+      /* scene visibility: crossfade in / out (first starts on, last stays on) */
+      if (isFirst){
+        gsap.set(sc, { autoAlpha: 1 });
+      } else {
+        master.fromTo(sc, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.35 }, i - 0.35);
+      }
+      if (!isLast){
+        master.to(sc, { autoAlpha: 0, duration: 0.35 }, i + 0.65);
+      }
+      /* camera: slow push-in + drift across the whole segment */
+      if (img){
+        master.fromTo(img,
+          { scale: 1.26, y: 19 },
+          { scale: 1.06, y: -19, duration: 1 },
+          i);
+      }
+      /* captions & blocks scrub in, then out */
+      fades.forEach(function(el){
+        master.fromTo(el,
+          { autoAlpha: 0, y: 30 },
+          { autoAlpha: 1, y: 0, duration: 0.24 },
+          i + 0.16);
+        if (!isLast){
+          master.to(el, { autoAlpha: 0, y: -18, duration: 0.16, immediateRender: false }, i + 0.84);
+        }
+      });
+      /* eyelids scrub open */
+      var lidTop = sc.querySelector(".lid-top");
+      var lidBottom = sc.querySelector(".lid-bottom");
+      if (lidTop && lidBottom){
+        gsap.set([lidTop, lidBottom], { scaleY: 1 });
+        master.to([lidTop, lidBottom], { scaleY: 0, duration: 0.5, ease: "power1.inOut" }, i + 0.10);
+      }
+      /* intro choreography */
+      var h1 = sc.querySelector("h1");
+      if (h1){
+        master.to(h1, { scale: 1.08, autoAlpha: 0, duration: 0.42, ease: "power1.in" }, i + 0.55);
+        sc.querySelectorAll(".mantra, .tagline, .scroll-hint").forEach(function(el){
+          master.to(el, { autoAlpha: 0, duration: 0.3, immediateRender: false }, i + 0.12);
+        });
+      }
+      /* hold each scene until its segment ends */
+      master.to({}, { duration: 0.0001 }, i + 0.9999);
+    });
+
+    setLive(0);
+    window.addEventListener("resize", function(){ layout(); ScrollTrigger.refresh(); });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function(){ ScrollTrigger.refresh(); });
+    ScrollTrigger.refresh();
+  } else {
+    /* CDN failed: static fallback so the page still reads top-to-bottom */
+    root.classList.add("no-gsap");
+    scenes.forEach(function(sc){ sc.classList.add("live"); });
+    if (progress) progress.style.display = "none";
+    if (dotsNav) dotsNav.style.display = "none";
   }
-  function onScroll(){
-    if (!ticking){ ticking = true; requestAnimationFrame(update); }
-  }
-  window.addEventListener("scroll", onScroll, { passive: true });
-  window.addEventListener("resize", function(){ layout(); sizeCanvas(); update(); });
-  update();
 
   /* nav links jump-scroll to their scene */
   document.querySelectorAll('a[href^="#"]').forEach(function(a){
     a.addEventListener("click", function(ev){
       var id = a.getAttribute("href").slice(1);
       var idx = scenes.findIndex(function(sc){ return sc.id === id; });
-      if (idx >= 0){
-        ev.preventDefault();
-        window.scrollTo({ top: idx * SEG, behavior: "smooth" });
-      }
+      if (idx >= 0){ ev.preventDefault(); scrollToScene(idx); }
     });
   });
 
@@ -135,6 +153,7 @@
   if (canvas){
     ctx = canvas.getContext("2d");
     sizeCanvas();
+    window.addEventListener("resize", sizeCanvas);
     function pos(ev){
       var r = canvas.getBoundingClientRect();
       return { x: ev.clientX - r.left, y: ev.clientY - r.top };
@@ -193,9 +212,8 @@
   var stream = document.getElementById("stream");
   var fill = 0, pouring = false, pourRaf = null, lastT = 0;
   function renderPour(){
-    var h = fill * 1.0;
-    pourFill.setAttribute("y", (130 - h).toFixed(1));
-    pourFill.setAttribute("height", h.toFixed(1));
+    pourFill.setAttribute("y", (130 - fill).toFixed(1));
+    pourFill.setAttribute("height", fill.toFixed(1));
     pourPct.textContent = Math.round(fill);
   }
   function pourLoop(t){
@@ -221,7 +239,7 @@
       ev.preventDefault();
       if (!chosen){
         var idx = scenes.findIndex(function(sc){ return sc.id === "selection"; });
-        if (idx >= 0) window.scrollTo({ top: idx * SEG, behavior: "smooth" });
+        if (idx >= 0) scrollToScene(idx);
         return;
       }
       if (fill >= 100) return;
