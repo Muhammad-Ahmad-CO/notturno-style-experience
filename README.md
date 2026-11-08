@@ -4,9 +4,11 @@ A fictional midnight-elixir brand site built as a **portfolio demo**: a scroll-d
 comic-book WebGL-style experience rebuilt from a reverse-engineering study of
 Santioni Spirits' "Notturno Experience" (see `REVERSE_ENGINEERING.md` for the full map).
 
-> **NOCTARA is fictional.** All artwork (inline SVG), copy and code in this repo are
-> original. No assets, fonts, text or code from the studied site are used — only its
-> scene order, palette, header layout and interaction model, rebuilt from scratch.
+> **NOCTARA is fictional.** All artwork, copy and code in this repo are
+> original — the scene paintings are AI-generated for this project and embedded
+> in `assets-data.js`. No assets, fonts, text or code from the studied site are
+> used — only its scene order, palette, header layout and interaction model,
+> rebuilt from scratch.
 
 **Tagline:** Elixirs to taste now, dream later.
 

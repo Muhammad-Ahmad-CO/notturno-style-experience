@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NOCTARA — Elixirs to taste now, dream later</title>
-<meta name="description" content="NOCTARA: a fictional midnight elixir brand. A scroll-driven, comic-book web experience built as a portfolio demo with original artwork and code.">
+<meta name="description" content="NOCTARA: a fictional midnight elixir brand. A scroll-driven, richly illustrated web experience built as a portfolio demo with original artwork and code.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Pirata+One&family=Cinzel+Decorative:wght@700;900&family=Archivo+Black&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
@@ -12,236 +12,131 @@
 </head>
 <body>
 
-<!-- ===== Header (per RE map: script logo left, menu pill right) ===== -->
+<div class="vignette" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+
 <header class="site-header">
-  <a class="logo" href="#intro" aria-label="Noctara home">Noctara</a>
+  <a class="logo" href="#intro">Noctara</a>
   <nav class="menu-pill" aria-label="Main">
-    <a class="menu-link active" href="#experience">EXPERIENCE</a>
-    <svg class="menu-ornament" width="42" height="12" viewBox="0 0 42 12" fill="none" aria-hidden="true">
-      <path d="M1 6 C8 1, 14 1, 21 6 C28 11, 34 11, 41 6" stroke="#C82924" stroke-width="2" fill="none"/>
-      <circle cx="21" cy="6" r="2.4" fill="#C82924"/>
-    </svg>
-    <a class="menu-link" href="#collection">COLLECTION</a>
+    <a href="#intro" class="active">EXPERIENCE</a>
+    <svg class="ornament" width="42" height="12" viewBox="0 0 42 12" aria-hidden="true"><path d="M1 6 C8 1, 14 11, 21 6 C28 1, 34 11, 41 6" fill="none" stroke="#C82924" stroke-width="2.4" stroke-linecap="round"/><circle cx="21" cy="6" r="2.4" fill="#C82924"/></svg>
+    <a href="#collection">COLLECTION</a>
   </nav>
 </header>
 
-<main id="experience">
-
-  <!-- ===== 1. Intro title card ===== -->
-  <section class="scene scene-intro" id="intro">
-    <div class="grain" aria-hidden="true"></div>
-    <p class="kicker reveal">NOCTARA PRESENTS</p>
-    <h1 class="display-xl reveal">THE MIDNIGHT<br>EXPERIENCE</h1>
-    <div class="mantra reveal" aria-label="Brand mantra">
-      <span>SIP YOUR NIGHT</span>
-      <span>SHAKE YOUR NIGHT</span>
-      <span>POUR YOUR NIGHT</span>
-    </div>
-    <p class="scroll-cue reveal">SCROLL TO BEGIN <span class="arrow">&#8595;</span></p>
+<main>
+  <!-- 1 · INTRO -->
+  <section id="intro" class="panel intro">
+    <div class="intro-glow" aria-hidden="true"></div>
+    <p class="mantra">SIP&nbsp;&nbsp;/&nbsp;&nbsp;SHAKE&nbsp;&nbsp;/&nbsp;&nbsp;POUR YOUR NIGHT</p>
+    <h1>THE MIDNIGHT<br>EXPERIENCE</h1>
+    <p class="tagline">Elixirs to taste now, dream later.</p>
+    <p class="scroll-hint">SCROLL ▼</p>
   </section>
 
-  <!-- ===== 2. Eyes opening ===== -->
-  <section class="scene scene-eyes" id="eyes">
-    <div class="panel-frame">
-      <!-- Original SVG eyes: amber irises, ink hatching -->
-      <svg class="eyes-svg" viewBox="0 0 900 360" role="img" aria-label="Illustrated eyes opening">
+  <!-- 2 · EYES -->
+  <section id="eyes" class="panel scene">
+    <div class="scene-img" data-asset="eyes" role="img" aria-label="Close-up of amber eyes in red shadow"></div>
+    <div class="lid lid-top" aria-hidden="true"></div>
+    <div class="lid lid-bottom" aria-hidden="true"></div>
+    <p class="caption reveal">FIRST, THE EYES OPEN</p>
+  </section>
+
+  <!-- 3 · HAND -->
+  <section id="hand" class="panel scene">
+    <div class="scene-img" data-asset="hand" role="img" aria-label="A hand reaching across a red wooden table toward a cocktail"></div>
+    <canvas id="smear" aria-hidden="true"></canvas>
+    <p class="caption reveal">SLOWLY, HIS HAND REACHES FORWARD</p>
+    <div class="badge" aria-hidden="true">
+      <svg viewBox="0 0 120 120">
+        <defs><path id="circ" d="M60,60 m-44,0 a44,44 0 1,1 88,0 a44,44 0 1,1 -88,0"/></defs>
+        <text><textPath href="#circ">HOLD &amp; MOVE • HOLD &amp; MOVE • </textPath></text>
+      </svg>
+      <span class="badge-core">✥</span>
+    </div>
+    <p class="hint">Press &amp; drag on the table — the red follows your hand</p>
+  </section>
+
+  <!-- 4 · SELECTION -->
+  <section id="selection" class="panel scene">
+    <div class="scene-img" data-asset="bottles" role="img" aria-label="Three glowing elixir bottles on stone plinths"></div>
+    <div class="zones">
+      <button class="zone" data-name="Ember Orange, Cacao &amp; Cream" data-color="#FBEB7F" aria-label="Choose Ember Orange, Cacao and Cream"></button>
+      <button class="zone" data-name="Midnight Mint, Cacao &amp; Cream" data-color="#97F3AD" aria-label="Choose Midnight Mint, Cacao and Cream"></button>
+      <button class="zone" data-name="Moon Marshmallow, Coffee &amp; Cream" data-color="#72C5F6" aria-label="Choose Moon Marshmallow, Coffee and Cream"></button>
+    </div>
+    <p class="caption reveal" id="selCaption">CHOOSE YOUR ELIXIR — TAP A BOTTLE</p>
+  </section>
+
+  <!-- 5 · POUR -->
+  <section id="pour" class="panel pour">
+    <div class="pour-bg" aria-hidden="true"></div>
+    <p class="caption reveal">NOW, POUR IT SLOWLY</p>
+    <div class="glass-wrap">
+      <div class="stream" id="stream" aria-hidden="true"></div>
+      <svg class="glass" viewBox="0 0 200 240" aria-hidden="true">
         <defs>
-          <clipPath id="eyeL"><path d="M60 180 C150 60, 330 60, 420 180 C330 300, 150 300, 60 180 Z"/></clipPath>
-          <clipPath id="eyeR"><path d="M480 180 C570 60, 750 60, 840 180 C750 300, 570 300, 480 180 Z"/></clipPath>
+          <clipPath id="bowlClip"><path d="M30 30 H170 C170 95 140 130 100 130 C60 130 30 95 30 30 Z"/></clipPath>
         </defs>
-        <rect x="0" y="0" width="900" height="360" fill="#C82924"/>
-        <g class="eye eye-left">
-          <path d="M60 180 C150 60, 330 60, 420 180 C330 300, 150 300, 60 180 Z" fill="#F3F1E9"/>
-          <g clip-path="url(#eyeL)">
-            <circle cx="240" cy="180" r="82" fill="#E9A13B"/>
-            <circle cx="240" cy="180" r="82" fill="none" stroke="#121212" stroke-width="6"/>
-            <circle cx="240" cy="180" r="36" fill="#121212"/>
-            <circle cx="262" cy="150" r="12" fill="#F3F1E9"/>
-            <path d="M120 90 L360 90 M110 270 L370 270 M150 60 L330 300 M330 60 L150 300" stroke="#121212" stroke-width="3" opacity=".25"/>
-          </g>
-          <path class="lid lid-top" d="M60 180 C150 60, 330 60, 420 180 C330 110, 150 110, 60 180 Z" fill="#592223"/>
-          <path d="M60 180 C150 60, 330 60, 420 180" fill="none" stroke="#121212" stroke-width="10"/>
-          <path d="M90 128 L70 96 M150 92 L140 54 M240 78 L240 36 M330 92 L342 54 M392 130 L414 98" stroke="#121212" stroke-width="7" stroke-linecap="round"/>
-        </g>
-        <g class="eye eye-right">
-          <path d="M480 180 C570 60, 750 60, 840 180 C750 300, 570 300, 480 180 Z" fill="#F3F1E9"/>
-          <g clip-path="url(#eyeR)">
-            <circle cx="660" cy="180" r="82" fill="#E9A13B"/>
-            <circle cx="660" cy="180" r="82" fill="none" stroke="#121212" stroke-width="6"/>
-            <circle cx="660" cy="180" r="36" fill="#121212"/>
-            <circle cx="682" cy="150" r="12" fill="#F3F1E9"/>
-            <path d="M540 90 L780 90 M530 270 L790 270 M570 60 L750 300 M750 60 L570 300" stroke="#121212" stroke-width="3" opacity=".25"/>
-          </g>
-          <path class="lid lid-top" d="M480 180 C570 60, 750 60, 840 180 C750 110, 570 110, 480 180 Z" fill="#592223"/>
-          <path d="M480 180 C570 60, 750 60, 840 180" fill="none" stroke="#121212" stroke-width="10"/>
-          <path d="M510 128 L490 96 M570 92 L560 54 M660 78 L660 36 M750 92 L762 54 M812 130 L834 98" stroke="#121212" stroke-width="7" stroke-linecap="round"/>
-        </g>
-      </svg>
-      <p class="caption-box reveal">FIRST, THE NIGHT OPENS ITS EYES.</p>
-    </div>
-  </section>
-
-  <!-- ===== 3. Approach: hooded figure + circular portal, parallax ===== -->
-  <section class="scene scene-approach" id="approach">
-    <div class="parallax layer-sky" data-speed="0.15" aria-hidden="true">
-      <svg viewBox="0 0 1200 300" preserveAspectRatio="xMidYMid slice"><circle cx="980" cy="90" r="52" fill="#F3F1E9"/><circle cx="980" cy="90" r="70" fill="none" stroke="#F3F1E9" stroke-width="2" opacity=".5"/></svg>
-    </div>
-    <div class="parallax layer-portal" data-speed="0.35" aria-hidden="true">
-      <svg viewBox="0 0 1200 600" preserveAspectRatio="xMidYMax meet">
-        <rect x="430" y="60" width="340" height="480" fill="#592223" stroke="#121212" stroke-width="8"/>
-        <circle cx="600" cy="280" r="150" fill="#121212" stroke="#F3F1E9" stroke-width="10"/>
-        <circle cx="600" cy="280" r="112" fill="#C82924"/>
-        <circle cx="600" cy="280" r="60" fill="#F3F1E9" opacity=".9"/>
+        <rect id="pourFill" x="30" y="130" width="140" height="0" clip-path="url(#bowlClip)"/>
+        <path d="M30 30 H170 C170 95 140 130 100 130 C60 130 30 95 30 30 Z" fill="rgba(243,241,233,0.06)" stroke="#F3F1E9" stroke-width="4"/>
+        <line x1="100" y1="130" x2="100" y2="205" stroke="#F3F1E9" stroke-width="5"/>
+        <line x1="55" y1="212" x2="145" y2="212" stroke="#F3F1E9" stroke-width="6" stroke-linecap="round"/>
       </svg>
     </div>
-    <div class="parallax layer-figure" data-speed="0.6" aria-hidden="true">
-      <svg viewBox="0 0 1200 600" preserveAspectRatio="xMidYMax meet">
-        <g transform="translate(520,250)">
-          <path d="M80 0 C40 30, 26 90, 30 160 L14 340 L146 340 L130 160 C134 90, 120 30, 80 0 Z" fill="#274156" stroke="#121212" stroke-width="7"/>
-          <path d="M80 6 C58 34, 52 66, 58 96 C66 116, 94 116, 102 96 C108 66, 102 34, 80 6 Z" fill="#E8C39A" stroke="#121212" stroke-width="6"/>
-          <path d="M44 150 L116 150 M38 220 L122 220" stroke="#121212" stroke-width="5" opacity=".5"/>
-        </g>
-        <path d="M0 560 L1200 560 M0 586 L1200 586" stroke="#121212" stroke-width="6"/>
-        <path d="M420 560 L600 470 L780 560" fill="none" stroke="#F3F1E9" stroke-width="5"/>
-      </svg>
-    </div>
-    <p class="caption-box light reveal">A HOODED GUEST CROSSES THE DUST,<br>AND STEPS TOWARD THE ROUND DOOR.</p>
+    <button id="pourBtn">HOLD TO POUR</button>
+    <p class="pour-pct"><span id="pourPct">0</span>%</p>
   </section>
 
-  <!-- ===== 4. Hand scene: HOLD & MOVE ===== -->
-  <section class="scene scene-hand" id="hand">
-    <div class="wood" aria-hidden="true"></div>
-    <canvas id="smearCanvas" aria-hidden="true"></canvas>
-    <!-- Original illustrated hand (SVG), follows the pointer -->
-    <div class="hand-wrap" id="handWrap" aria-hidden="true">
-      <svg viewBox="0 0 320 260">
-        <path d="M150 250 L142 150 C120 142, 84 128, 52 104 C34 90, 38 66, 58 66 C76 66, 104 82, 128 96 L126 60 C126 40, 148 32, 160 46 L168 24 C174 6, 200 6, 206 26 L214 8 C222 -8, 246 0, 246 20 L248 44 C262 32, 284 44, 280 66 C274 104, 262 140, 252 168 L244 250 Z" fill="#F0C8A0" stroke="#121212" stroke-width="7" stroke-linejoin="round"/>
-        <path d="M160 120 L156 190 M196 116 L196 196 M232 124 L226 190" stroke="#121212" stroke-width="4" opacity=".45"/>
-        <path d="M142 214 L246 214" stroke="#121212" stroke-width="8"/>
-        <path d="M150 236 C190 224, 220 224, 244 236" fill="none" stroke="#C82924" stroke-width="6"/>
-      </svg>
-    </div>
-    <p class="caption-box reveal">SLOWLY, HIS HAND REACHES FORWARD.</p>
-    <div class="hold-badge" aria-hidden="true"><span>HOLD<br>&amp;<br>MOVE</span></div>
-    <p class="hand-hint label">PRESS, HOLD AND DRAG ACROSS THE WOOD</p>
+  <!-- 6 · TASTE / ANTIGRAVITY -->
+  <section id="taste" class="panel taste">
+    <div class="taste-glow" aria-hidden="true"></div>
+    <div id="orbs" aria-hidden="true"></div>
+    <p class="caption reveal">ONE SIP — AND THE WORLD DRIFTS</p>
+    <p class="taste-note" id="tasteNote">Choose a bottle above, then watch its colour rise.</p>
   </section>
 
-  <!-- ===== 5. Drink selection ===== -->
-  <section class="scene scene-selection" id="selection">
-    <h2 class="display-md reveal">CHOOSE YOUR ELIXIR</h2>
-    <p class="lede reveal">Three bottles wait on their plinths. Pick one — the night will pour in its colour.</p>
-    <div class="bottles">
-      <button class="bottle-card reveal" type="button" data-name="Moon Marshmallow, Coffee &amp; Cream" data-color="#72C5F6" data-key="moon" aria-pressed="false">
-        <svg viewBox="0 0 120 300" class="bottle-svg"><rect x="48" y="8" width="24" height="26" fill="#121212"/><path d="M44 34 L76 34 L76 70 C92 86, 100 104, 100 140 L100 262 C100 282, 88 292, 60 292 C32 292, 20 282, 20 262 L20 140 C20 104, 28 86, 44 70 Z" fill="#72C5F6" stroke="#121212" stroke-width="6"/><rect x="34" y="150" width="52" height="74" fill="#F3F1E9" stroke="#121212" stroke-width="4"/><text x="60" y="182" text-anchor="middle" font-size="13" font-family="Archivo Black" fill="#121212">MOON</text><text x="60" y="202" text-anchor="middle" font-size="9" fill="#121212">N°3</text></svg>
-        <span class="plinth"></span><span class="bottle-name">MOON</span>
-      </button>
-      <button class="bottle-card reveal" type="button" data-name="Midnight Mint, Cacao &amp; Cream" data-color="#97F3AD" data-key="mint" aria-pressed="false">
-        <svg viewBox="0 0 120 300" class="bottle-svg"><rect x="48" y="8" width="24" height="26" fill="#121212"/><path d="M44 34 L76 34 L76 70 C92 86, 100 104, 100 140 L100 262 C100 282, 88 292, 60 292 C32 292, 20 282, 20 262 L20 140 C20 104, 28 86, 44 70 Z" fill="#97F3AD" stroke="#121212" stroke-width="6"/><rect x="34" y="150" width="52" height="74" fill="#F3F1E9" stroke="#121212" stroke-width="4"/><text x="60" y="182" text-anchor="middle" font-size="13" font-family="Archivo Black" fill="#121212">MINT</text><text x="60" y="202" text-anchor="middle" font-size="9" fill="#121212">N°2</text></svg>
-        <span class="plinth"></span><span class="bottle-name">MINT</span>
-      </button>
-      <button class="bottle-card reveal" type="button" data-name="Ember Orange, Cacao &amp; Cream" data-color="#FBEB7F" data-key="ember" aria-pressed="false">
-        <svg viewBox="0 0 120 300" class="bottle-svg"><rect x="48" y="8" width="24" height="26" fill="#121212"/><path d="M44 34 L76 34 L76 70 C92 86, 100 104, 100 140 L100 262 C100 282, 88 292, 60 292 C32 292, 20 282, 20 262 L20 140 C20 104, 28 86, 44 70 Z" fill="#FBEB7F" stroke="#121212" stroke-width="6"/><rect x="34" y="150" width="52" height="74" fill="#F3F1E9" stroke="#121212" stroke-width="4"/><text x="60" y="182" text-anchor="middle" font-size="11" font-family="Archivo Black" fill="#121212">EMBER</text><text x="60" y="202" text-anchor="middle" font-size="9" fill="#121212">N°1</text></svg>
-        <span class="plinth"></span><span class="bottle-name">EMBER</span>
-      </button>
-    </div>
-    <p class="selection-caption label" id="selectionCaption">NO ELIXIR CHOSEN YET — THE GLASS WAITS, EMPTY.</p>
+  <!-- 7 · CATHEDRAL -->
+  <section id="cathedral" class="panel scene">
+    <div class="scene-img slow" data-asset="cathedral" role="img" aria-label="A dark cathedral interior with a glowing shelf of bottles"></div>
+    <p class="caption reveal">A CATHEDRAL BUILT FOR THE NIGHT</p>
   </section>
 
-  <!-- ===== 6. Pour scene ===== -->
-  <section class="scene scene-pour" id="pour">
-    <h2 class="display-md reveal">THE POUR</h2>
-    <div class="pour-stage">
-      <svg class="pour-bottle" id="pourBottle" viewBox="0 0 120 300" aria-hidden="true"><rect x="48" y="8" width="24" height="26" fill="#121212"/><path d="M44 34 L76 34 L76 70 C92 86, 100 104, 100 140 L100 262 C100 282, 88 292, 60 292 C32 292, 20 282, 20 262 L20 140 C20 104, 28 86, 44 70 Z" fill="var(--selected, #72C5F6)" stroke="#121212" stroke-width="6"/></svg>
-      <div class="pour-stream" id="pourStream" aria-hidden="true"></div>
-      <svg class="glass-svg" viewBox="0 0 220 260" role="img" aria-label="A cocktail glass being filled">
-        <defs><clipPath id="glassClip"><path d="M20 30 L200 30 L118 128 C112 136, 108 136, 102 128 Z"/></clipPath></defs>
-        <rect id="glassFill" x="20" y="128" width="180" height="0" fill="var(--selected, #72C5F6)" clip-path="url(#glassClip)"/>
-        <path d="M20 30 L200 30 L118 128 C112 136, 108 136, 102 128 Z" fill="rgba(243,241,233,.14)" stroke="#F3F1E9" stroke-width="6"/>
-        <path d="M110 132 L110 216 M64 236 L156 236" stroke="#F3F1E9" stroke-width="8" stroke-linecap="round"/>
-      </svg>
+  <!-- 8 · COLLECTION -->
+  <section id="collection" class="panel scene collection">
+    <div class="scene-img dim" data-asset="bottles" role="img" aria-label="The Noctara midnight collection"></div>
+    <div class="collection-head reveal">
+      <h2>MIDNIGHT COLLECTION</h2>
+      <p>AN ODE TO YOUR NIGHT</p>
     </div>
-    <p class="pour-pct label" id="pourPct">0%</p>
-    <button class="hold-btn" id="pourBtn" type="button">HOLD TO POUR</button>
-    <p class="pour-state label" id="pourState">CHOOSE AN ELIXIR ABOVE, THEN HOLD THE BUTTON.</p>
-  </section>
-
-  <!-- ===== 7. Taste + antigravity ===== -->
-  <section class="scene scene-taste" id="taste">
-    <div class="float-field" aria-hidden="true">
-      <span class="rock r1"></span><span class="rock r2"></span><span class="rock r3"></span>
-      <span class="rock r4"></span><span class="rock r5"></span><span class="orb o1"></span><span class="orb o2"></span>
-    </div>
-    <svg class="taste-figure" viewBox="0 0 300 380" role="img" aria-label="The hooded guest tasting the elixir">
-      <path d="M150 20 C104 56, 88 116, 94 190 L78 356 L222 356 L206 190 C212 116, 196 56, 150 20 Z" fill="#274156" stroke="#121212" stroke-width="7"/>
-      <path d="M150 30 C124 60, 116 92, 122 122 C130 144, 170 144, 178 122 C184 92, 176 60, 150 30 Z" fill="#E8C39A" stroke="#121212" stroke-width="6"/>
-      <path d="M196 176 L252 132" stroke="#E8C39A" stroke-width="20" stroke-linecap="round"/>
-      <path d="M238 96 L282 96 L258 130 C254 136, 250 136, 246 130 Z" fill="var(--selected, #72C5F6)" stroke="#F3F1E9" stroke-width="4"/>
-      <path d="M256 132 L256 158 M240 164 L272 164" stroke="#F3F1E9" stroke-width="5" stroke-linecap="round"/>
-      <circle cx="132" cy="96" r="6" fill="#121212"/><circle cx="168" cy="96" r="6" fill="#121212"/>
-      <path d="M134 122 C144 132, 156 132, 166 122" fill="none" stroke="#121212" stroke-width="5" stroke-linecap="round"/>
-    </svg>
-    <div class="taste-copy">
-      <h2 class="display-md reveal">ONE SIP,<br>AND THE FLOOR FORGETS HIM</h2>
-      <p class="lede reveal">The chosen colour rises through the story. Stones loosen. Columns hold their breath. Gravity, politely, leaves the room.</p>
-      <p class="caption-box reveal">TASTE — THEN FLOAT.</p>
-    </div>
-  </section>
-
-  <!-- ===== 8. Cathedral + crumbling pillars ===== -->
-  <section class="scene scene-cathedral" id="cathedral">
-    <h2 class="display-md light reveal">THE QUIET CATHEDRAL</h2>
-    <svg class="cathedral-svg" viewBox="0 0 1200 520" role="img" aria-label="White columns on a red field, two of them crumbling">
-      <rect x="0" y="470" width="1200" height="14" fill="#F3F1E9"/>
-      <g class="pillar"><rect x="90" y="110" width="64" height="360" fill="#F3F1E9"/><rect x="76" y="84" width="92" height="26" fill="#F3F1E9"/><rect x="76" y="470" width="92" height="18" fill="#F3F1E9"/><path d="M100 130 L100 450 M122 130 L122 450 M144 130 L144 450" stroke="#C82924" stroke-width="5"/></g>
-      <g class="pillar crumble crumble-a"><rect class="p-top" x="300" y="110" width="64" height="150" fill="#F3F1E9"/><rect class="p-mid" x="300" y="266" width="64" height="100" fill="#F3F1E9"/><rect class="p-bot" x="300" y="372" width="64" height="98" fill="#F3F1E9"/><rect x="286" y="84" width="92" height="26" fill="#F3F1E9"/><path class="crack" d="M306 120 L336 190 L312 258 L342 330 L318 372" fill="none" stroke="#121212" stroke-width="5"/></g>
-      <g class="pillar"><rect x="510" y="110" width="64" height="360" fill="#F3F1E9"/><rect x="496" y="84" width="92" height="26" fill="#F3F1E9"/><path d="M520 130 L520 450 M542 130 L542 450 M564 130 L564 450" stroke="#C82924" stroke-width="5"/></g>
-      <g class="pillar crumble crumble-b"><rect class="p-top" x="720" y="110" width="64" height="130" fill="#F3F1E9"/><rect class="p-mid" x="720" y="246" width="64" height="110" fill="#F3F1E9"/><rect class="p-bot" x="720" y="362" width="64" height="108" fill="#F3F1E9"/><rect x="706" y="84" width="92" height="26" fill="#F3F1E9"/><path class="crack" d="M772 118 L742 186 L768 252 L738 322 L760 362" fill="none" stroke="#121212" stroke-width="5"/></g>
-      <g class="pillar"><rect x="930" y="110" width="64" height="360" fill="#F3F1E9"/><rect x="916" y="84" width="92" height="26" fill="#F3F1E9"/><path d="M940 130 L940 450 M962 130 L962 450 M984 130 L984 450" stroke="#C82924" stroke-width="5"/></g>
-      <g class="rubble" fill="#F3F1E9"><path d="M282 486 L322 462 L346 486 Z"/><path d="M700 486 L742 458 L772 486 Z"/><path d="M352 486 L378 470 L394 486 Z"/></g>
-    </svg>
-    <p class="caption-box light reveal">EVEN STONE CANNOT HOLD THE NIGHT FOREVER.</p>
-  </section>
-
-  <!-- ===== 9. Collection ===== -->
-  <section class="scene scene-collection" id="collection">
-    <p class="kicker dark reveal">AN ODE TO YOUR NIGHT</p>
-    <h2 class="display-lg reveal">MIDNIGHT<br>COLLECTION</h2>
     <div class="cards">
-      <article class="card reveal" style="--card:#FBEB7F">
-        <svg viewBox="0 0 120 300" class="mini-bottle"><rect x="48" y="8" width="24" height="26" fill="#121212"/><path d="M44 34 L76 34 L76 70 C92 86, 100 104, 100 140 L100 262 C100 282, 88 292, 60 292 C32 292, 20 282, 20 262 L20 140 C20 104, 28 86, 44 70 Z" fill="#FBEB7F" stroke="#121212" stroke-width="6"/></svg>
-        <h3>EMBER ORANGE,<br>CACAO &amp; CREAM</h3>
-        <p class="notes">N°1 — Warm citrus over dark cacao, a soft cream finish. The first spark of the night.</p>
-        <p class="label">TASTING NOTES: ORANGE PEEL · CACAO · EMBER SPICE</p>
+      <article class="card" style="--c:#FBEB7F">
+        <h3>EMBER ORANGE</h3>
+        <p>Cacao &amp; Cream — burnt orange, dark chocolate, a warm ember finish.</p>
       </article>
-      <article class="card reveal" style="--card:#97F3AD">
-        <svg viewBox="0 0 120 300" class="mini-bottle"><rect x="48" y="8" width="24" height="26" fill="#121212"/><path d="M44 34 L76 34 L76 70 C92 86, 100 104, 100 140 L100 262 C100 282, 88 292, 60 292 C32 292, 20 282, 20 262 L20 140 C20 104, 28 86, 44 70 Z" fill="#97F3AD" stroke="#121212" stroke-width="6"/></svg>
-        <h3>MIDNIGHT MINT,<br>CACAO &amp; CREAM</h3>
-        <p class="notes">N°2 — Cool garden mint folded into cacao, finishing smooth and green as moonlit leaves.</p>
-        <p class="label">TASTING NOTES: FRESH MINT · CACAO NIB · CREAM</p>
+      <article class="card" style="--c:#97F3AD">
+        <h3>MIDNIGHT MINT</h3>
+        <p>Cacao &amp; Cream — cool mint over deep cacao, soft and green-dark.</p>
       </article>
-      <article class="card reveal" style="--card:#72C5F6">
-        <svg viewBox="0 0 120 300" class="mini-bottle"><rect x="48" y="8" width="24" height="26" fill="#121212"/><path d="M44 34 L76 34 L76 70 C92 86, 100 104, 100 140 L100 262 C100 282, 88 292, 60 292 C32 292, 20 282, 20 262 L20 140 C20 104, 28 86, 44 70 Z" fill="#72C5F6" stroke="#121212" stroke-width="6"/></svg>
-        <h3>MOON MARSHMALLOW,<br>COFFEE &amp; CREAM</h3>
-        <p class="notes">N°3 — Toasted marshmallow drifting over slow coffee, the colour of a dream just before waking.</p>
-        <p class="label">TASTING NOTES: MARSHMALLOW · COFFEE · VANILLA CREAM</p>
+      <article class="card" style="--c:#72C5F6">
+        <h3>MOON MARSHMALLOW</h3>
+        <p>Coffee &amp; Cream — toasted marshmallow, espresso, midnight blue silk.</p>
       </article>
     </div>
   </section>
 
+  <!-- 9 · FOOTER -->
+  <footer class="panel footer">
+    <p class="footer-brand">NOCTARA</p>
+    <p class="footer-note">A fictional brand. Original artwork &amp; code, built as a portfolio study of a scroll-driven WebGL-style experience. No affiliation with any real spirits brand.</p>
+    <nav class="footer-links">
+      <a href="#intro">EXPERIENCE</a>
+      <a href="#collection">COLLECTION</a>
+    </nav>
+  </footer>
 </main>
 
-<!-- ===== 10. Footer ===== -->
-<footer class="scene-footer">
-  <p class="footer-tag label">ELIXIRS TO TASTE NOW, DREAM LATER</p>
-  <p class="footer-wordmark">NOCTARA</p>
-  <nav class="footer-links" aria-label="Footer">
-    <a href="#experience">EXPERIENCE</a>
-    <svg class="menu-ornament" width="42" height="12" viewBox="0 0 42 12" fill="none" aria-hidden="true"><path d="M1 6 C8 1, 14 1, 21 6 C28 11, 34 11, 41 6" stroke="#C82924" stroke-width="2" fill="none"/><circle cx="21" cy="6" r="2.4" fill="#C82924"/></svg>
-    <a href="#collection">COLLECTION</a>
-  </nav>
-  <p class="footer-note">Demo / portfolio project — original artwork and code, inspired by a reverse-engineering study. NOCTARA is a fictional brand; any resemblance in mood is a tribute, not a copy.</p>
-</footer>
-
+<script src="assets-data.js"></script>
 <script src="script.js"></script>
 </body>
 </html>
