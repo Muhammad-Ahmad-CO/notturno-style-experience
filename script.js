@@ -76,14 +76,25 @@
       var fades = sc.querySelectorAll(".caption, .scrub");
       var isFirst = i === 0, isLast = i === N - 1;
 
-      /* scene visibility: crossfade in / out (first starts on, last stays on) */
+      /* scene visibility: the swap happens fast, hidden under the
+         ink-wipe bars that sweep across at every boundary */
       if (isFirst){
         gsap.set(sc, { autoAlpha: 1 });
       } else {
-        master.fromTo(sc, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.35 }, i - 0.35);
+        master.fromTo(sc, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.1 }, i - 0.1);
       }
       if (!isLast){
-        master.to(sc, { autoAlpha: 0, duration: 0.35 }, i + 0.65);
+        master.to(sc, { autoAlpha: 0, duration: 0.1 }, i + 0.9);
+      }
+      /* ink-wipe bars: sweep in from the left, cover the swap, sweep out right */
+      if (!isFirst){
+        master.fromTo(".wipe",
+          { scaleX: 0, transformOrigin: "left center" },
+          { scaleX: 1, duration: 0.22, stagger: 0.05, ease: "power2.inOut", immediateRender: i === 1 },
+          i - 0.32);
+        master.to(".wipe",
+          { scaleX: 0, transformOrigin: "right center", duration: 0.22, stagger: 0.05, ease: "power2.inOut", immediateRender: false },
+          i + 0.03);
       }
       /* camera: slow push-in + drift across the whole segment */
       if (img){

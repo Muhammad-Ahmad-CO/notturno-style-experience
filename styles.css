@@ -183,6 +183,15 @@ body{background:#0d0505;color:var(--cream);font-family:'Inter',sans-serif;overfl
   .glass,.glass-wrap{height:220px}
 }
 
+/* manga ink-wipe transition bars (driven by the GSAP master timeline) */
+#wipes { position: absolute; inset: 0; z-index: 40; pointer-events: none; }
+.wipe { position: absolute; inset: 0; transform: scaleX(0); }
+.wipe.w1 { background: var(--red); }
+.wipe.w2 { background-color: var(--darkred);
+  background-image: radial-gradient(rgba(243,241,233,0.20) 1.2px, transparent 1.3px);
+  background-size: 9px 9px; }
+.wipe.w3 { background: var(--ink); }
+
 /* if the GSAP CDN cannot load, script.js adds .no-gsap and the page
    falls back to a plain readable flow (same as the noscript rules) */
 .no-gsap #stage { position: static; }
