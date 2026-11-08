@@ -9,12 +9,15 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Pirata+One&family=Cinzel+Decorative:wght@700;900&family=Archivo+Black&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
+<noscript><style>#stage{position:static}#spacer,#dots,#progress{display:none}.panel{position:relative;opacity:1!important;visibility:visible!important;min-height:100vh}</style></noscript>
 </head>
 <body>
 
 <div class="vignette" aria-hidden="true"></div>
 <div class="grain" aria-hidden="true"></div>
 <div class="halftone" aria-hidden="true"></div>
+<div id="progress" aria-hidden="true"></div>
+<nav id="dots" aria-label="Scenes"></nav>
 
 <header class="site-header">
   <a class="logo" href="#intro">Noctara</a>
@@ -25,7 +28,7 @@
   </nav>
 </header>
 
-<main>
+<main id="stage">
   <!-- 1 · INTRO -->
   <section id="intro" class="panel intro">
     <div class="intro-glow" aria-hidden="true"></div>
@@ -81,7 +84,7 @@
   <section id="pour" class="panel pour">
     <div class="scene-img pour-img" data-asset="pour" role="img" aria-label="A shaker pouring a glowing stream into a martini glass"></div>
     <p class="caption reveal">NOW, POUR IT SLOWLY</p>
-    <div class="glass-wrap">
+    <div class="glass-wrap scrub">
       <div class="stream" id="stream" aria-hidden="true"></div>
       <svg class="glass" viewBox="0 0 200 240" aria-hidden="true">
         <defs>
@@ -93,8 +96,8 @@
         <line x1="55" y1="212" x2="145" y2="212" stroke="#F3F1E9" stroke-width="6" stroke-linecap="round"/>
       </svg>
     </div>
-    <button id="pourBtn">HOLD TO POUR</button>
-    <p class="pour-pct"><span id="pourPct">0</span>%</p>
+    <button id="pourBtn" class="scrub">HOLD TO POUR</button>
+    <p class="pour-pct scrub"><span id="pourPct">0</span>%</p>
   </section>
 
   <!-- 7 · TASTE / ANTIGRAVITY -->
@@ -103,7 +106,7 @@
     <div class="taste-glow" aria-hidden="true"></div>
     <div id="orbs" aria-hidden="true"></div>
     <p class="caption reveal">ONE SIP — AND THE WORLD DRIFTS</p>
-    <p class="taste-note" id="tasteNote">Choose a bottle above, then watch its colour rise.</p>
+    <p class="taste-note scrub" id="tasteNote">Choose a bottle above, then watch its colour rise.</p>
   </section>
 
   <!-- 8 · COLOSSEUM -->
@@ -121,11 +124,11 @@
   <!-- 10 · COLLECTION -->
   <section id="collection" class="panel scene collection">
     <div class="scene-img dim" data-asset="bottles" role="img" aria-label="The Noctara midnight collection"></div>
-    <div class="collection-head reveal">
+    <div class="collection-head scrub">
       <h2>MIDNIGHT COLLECTION</h2>
       <p>AN ODE TO YOUR NIGHT</p>
     </div>
-    <div class="cards">
+    <div class="cards scrub">
       <article class="card" style="--c:#FBEB7F">
         <h3>EMBER ORANGE</h3>
         <p>Cacao &amp; Cream — burnt orange, dark chocolate, a warm ember finish.</p>
@@ -142,15 +145,16 @@
   </section>
 
   <!-- 11 · FOOTER -->
-  <footer class="panel footer">
-    <p class="footer-brand">NOCTARA</p>
-    <p class="footer-note">A fictional brand. Original artwork &amp; code, built as a portfolio study of a scroll-driven WebGL-style experience. No affiliation with any real spirits brand.</p>
-    <nav class="footer-links">
+  <footer id="outro" class="panel footer scene">
+    <p class="footer-brand scrub">NOCTARA</p>
+    <p class="footer-note scrub">A fictional brand. Original artwork &amp; code, built as a portfolio study of a scroll-driven WebGL-style experience. No affiliation with any real spirits brand.</p>
+    <nav class="footer-links scrub">
       <a href="#intro">EXPERIENCE</a>
       <a href="#collection">COLLECTION</a>
     </nav>
   </footer>
 </main>
+<div id="spacer"></div>
 
 <script src="assets-data.js"></script>
 <script src="script.js"></script>
