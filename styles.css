@@ -120,6 +120,8 @@ body{background:#0d0505;color:var(--cream);font-family:'Inter',sans-serif;overfl
   radial-gradient(ellipse 80% 45% at 50% 112%,rgba(200,41,36,.35),transparent 60%),
   linear-gradient(180deg,#120404,#0d0505);padding:110px 20px 70px;gap:8px}
 .pour .caption{position:relative;left:auto;bottom:auto;margin-bottom:20px}
+.pour>*:not(.scene-img){position:relative;z-index:3}
+.scene-img.pour-img{filter:brightness(.42) saturate(1.18) contrast(1.06)}
 .glass-wrap{position:relative;height:270px;display:flex;justify-content:center}
 .glass{height:270px;filter:drop-shadow(0 12px 26px rgba(0,0,0,.6))}
 #pourFill{fill:var(--sel);transition:fill .4s}
