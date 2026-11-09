@@ -183,11 +183,21 @@ body{background:#0d0505;color:var(--cream);font-family:'Inter',sans-serif;overfl
   .glass,.glass-wrap{height:220px}
 }
 
+/* ---------- sound toggle ---------- */
+#soundBtn{font-family:'Archivo Black',sans-serif;font-size:11px;letter-spacing:1.5px;
+  cursor:pointer;background:rgba(13,5,5,.72);color:var(--cream);
+  border:2px solid rgba(243,241,233,.55);border-radius:999px;padding:10px 16px;
+  box-shadow:0 6px 24px rgba(0,0,0,.45);transition:all .3s}
+#soundBtn[aria-pressed="true"]{background:var(--red);border-color:var(--red)}
+@media (max-width:640px){
+  #soundBtn{padding:8px 12px;font-size:10px}
+}
+
 /* manga ink-wipe transition bars (driven by the GSAP master timeline) */
 #wipes { position: absolute; inset: 0; z-index: 40; pointer-events: none; }
 .wipe { position: absolute; inset: 0; transform: scaleX(0); }
 .wipe.w1 { background: var(--red); }
-.wipe.w2 { background-color: var(--darkred);
+.wipe.w2 { background-color: var(--red-dark);
   background-image: radial-gradient(rgba(243,241,233,0.20) 1.2px, transparent 1.3px);
   background-size: 9px 9px; }
 .wipe.w3 { background: var(--ink); }

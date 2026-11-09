@@ -15,6 +15,144 @@
   var dotsNav = document.getElementById("dots");
   var SEG = 0;
 
+  /* ================= sound — v8 (ui-sound-design skill) =================
+     Every sound is synthesized with the Web Audio API: no audio files,
+     nothing copied. Browsers block audio until a user gesture, so the
+     AudioContext is created/resumed only from a gesture and sound stays
+     OFF until the user turns it on (header toggle, remembered in
+     localStorage). Master gain never exceeds 0.3; exponential ramps
+     always end at 0.001, never 0 (ramping to 0 throws). */
+  var soundOn = false, soundArmed = false;
+  var actx = null, masterGain = null, noiseBuf = null;
+  var pourSrc = null, pourFilter = null, pourGain = null, ambNodes = null;
+  var soundBtn = document.getElementById("soundBtn");
+  var lastSoundIdx = -1;
+
+  function audioCtx(){
+    if (!actx){
+      try {
+        var AC = window.AudioContext || window.webkitAudioContext;
+        if (!AC) return null;
+        actx = new AC();
+        masterGain = actx.createGain();
+        masterGain.gain.value = 0.3;
+        masterGain.connect(actx.destination);
+        var len = actx.sampleRate;
+        noiseBuf = actx.createBuffer(1, len, actx.sampleRate);
+        var d = noiseBuf.getChannelData(0);
+        for (var i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+      } catch (e) { actx = null; return null; }
+    }
+    if (actx.state === "suspended") actx.resume();
+    return actx;
+  }
+  function playTone(freq0, freq1, dur, type, vol, delay){
+    if (!soundOn) return;
+    var c = audioCtx(); if (!c) return;
+    var now = c.currentTime + (delay || 0);
+    var o = c.createOscillator(), g = c.createGain();
+    o.type = type || "sine";
+    o.frequency.setValueAtTime(freq0, now);
+    if (freq1 && freq1 !== freq0) o.frequency.exponentialRampToValueAtTime(freq1, now + dur);
+    g.gain.setValueAtTime(0.0001, now);
+    g.gain.exponentialRampToValueAtTime(vol || 0.2, now + 0.012);
+    g.gain.exponentialRampToValueAtTime(0.001, now + dur);
+    o.connect(g); g.connect(masterGain);
+    o.start(now); o.stop(now + dur + 0.05);
+  }
+  function playWhoosh(){
+    if (!soundOn) return;
+    var c = audioCtx(); if (!c || !noiseBuf) return;
+    var now = c.currentTime;
+    var src = c.createBufferSource(); src.buffer = noiseBuf; src.loop = true;
+    var f = c.createBiquadFilter(); f.type = "bandpass"; f.Q.value = 1.1;
+    f.frequency.setValueAtTime(320, now);
+    f.frequency.exponentialRampToValueAtTime(2600, now + 0.22);
+    f.frequency.exponentialRampToValueAtTime(500, now + 0.4);
+    var g = c.createGain();
+    g.gain.setValueAtTime(0.0001, now);
+    g.gain.exponentialRampToValueAtTime(0.22, now + 0.08);
+    g.gain.exponentialRampToValueAtTime(0.001, now + 0.42);
+    src.connect(f); f.connect(g); g.connect(masterGain);
+    src.start(now); src.stop(now + 0.45);
+  }
+  function startAmbience(){
+    var c = audioCtx(); if (!c || ambNodes) return;
+    var g = c.createGain(); g.gain.value = 0;
+    g.gain.setTargetAtTime(0.05, c.currentTime, 1.5);
+    g.connect(masterGain);
+    var o1 = c.createOscillator(); o1.type = "sine"; o1.frequency.value = 55;
+    var o2 = c.createOscillator(); o2.type = "triangle"; o2.frequency.value = 82.41;
+    var g2 = c.createGain(); g2.gain.value = 0.35;
+    var lfo = c.createOscillator(); lfo.frequency.value = 0.07;
+    var lfoG = c.createGain(); lfoG.gain.value = 0.02;
+    o1.connect(g); o2.connect(g2); g2.connect(g);
+    lfo.connect(lfoG); lfoG.connect(g.gain);
+    o1.start(); o2.start(); lfo.start();
+    ambNodes = { g: g, oscs: [o1, o2, lfo] };
+  }
+  function stopAmbience(){
+    if (!ambNodes) return;
+    var n = ambNodes; ambNodes = null;
+    try {
+      n.g.gain.setTargetAtTime(0.0001, actx.currentTime, 0.2);
+      n.oscs.forEach(function(o){ try { o.stop(actx.currentTime + 0.6); } catch (e) {} });
+      setTimeout(function(){ try { n.g.disconnect(); } catch (e) {} }, 700);
+    } catch (e) {}
+  }
+  /* Pour noise: a looped filtered-noise stream whose loudness and
+     brightness follow the pour progress (0..1). */
+  function setPourLevel(level){
+    if (!soundOn || level <= 0){ stopPourNoise(); return; }
+    var c = audioCtx(); if (!c || !noiseBuf) return;
+    if (!pourSrc){
+      pourSrc = c.createBufferSource(); pourSrc.buffer = noiseBuf; pourSrc.loop = true;
+      pourFilter = c.createBiquadFilter(); pourFilter.type = "bandpass";
+      pourFilter.frequency.value = 600; pourFilter.Q.value = 0.7;
+      pourGain = c.createGain(); pourGain.gain.value = 0.0001;
+      pourSrc.connect(pourFilter); pourFilter.connect(pourGain); pourGain.connect(masterGain);
+      pourSrc.start();
+    }
+    pourGain.gain.setTargetAtTime(0.03 + 0.13 * level, c.currentTime, 0.08);
+    pourFilter.frequency.setTargetAtTime(420 + 900 * level, c.currentTime, 0.1);
+  }
+  function stopPourNoise(){
+    if (!pourSrc) return;
+    var src = pourSrc, g = pourGain;
+    pourSrc = null; pourFilter = null; pourGain = null;
+    try {
+      if (actx){ g.gain.setTargetAtTime(0.0001, actx.currentTime, 0.05); src.stop(actx.currentTime + 0.3); }
+      else src.stop();
+    } catch (e) {}
+  }
+  function setSound(on){
+    soundOn = on;
+    if (soundBtn){
+      soundBtn.textContent = on ? "SOUND ON" : "SOUND OFF";
+      soundBtn.setAttribute("aria-pressed", on ? "true" : "false");
+    }
+    try { localStorage.setItem("noctara-sound", on ? "1" : "0"); } catch (e) {}
+    if (on){ audioCtx(); startAmbience(); }
+    else { stopPourNoise(); stopAmbience(); }
+  }
+  function armSound(){
+    if (soundOn && !soundArmed){ soundArmed = true; audioCtx(); startAmbience(); }
+  }
+  if (soundBtn) soundBtn.addEventListener("click", function(){
+    setSound(!soundOn);
+    if (soundOn) playTone(660, 880, 0.18, "sine", 0.18);
+  });
+  document.addEventListener("pointerdown", armSound);
+  try {
+    if (localStorage.getItem("noctara-sound") === "1"){
+      soundOn = true;
+      if (soundBtn){
+        soundBtn.textContent = "SOUND ON";
+        soundBtn.setAttribute("aria-pressed", "true");
+      }
+    }
+  } catch (e) {}
+
   function layout(){
     SEG = Math.round(window.innerHeight * 1.3);
     spacer.style.height = ((scenes.length - 1) * SEG + window.innerHeight) + "px";
@@ -33,8 +171,19 @@
   function setLive(idx){
     scenes.forEach(function(sc, i){ sc.classList.toggle("live", i === idx); });
     dots.forEach(function(b, i){ b.classList.toggle("on", i === idx); });
+    /* sound: a whoosh rides each ink-wipe scene change; a soft chime
+       marks arriving at the Taste scene */
+    if (idx !== lastSoundIdx){
+      if (lastSoundIdx >= 0) playWhoosh();
+      lastSoundIdx = idx;
+      if (scenes[idx] && scenes[idx].id === "taste"){
+        playTone(523.25, 523.25, 0.5, "sine", 0.10);
+        playTone(783.99, 783.99, 0.6, "sine", 0.08, 0.14);
+      }
+    }
   }
   function scrollToScene(i){
+    playTone(1200, 900, 0.06, "sine", 0.10);
     var y = i * SEG;
     if (window.gsap && window.ScrollToPlugin){
       gsap.to(window, { duration: 1.1, ease: "power2.inOut", scrollTo: { y: y, autoKill: false } });
@@ -210,6 +359,7 @@
       z.classList.add("selected");
       chosen = { name: z.getAttribute("data-name"), color: z.getAttribute("data-color") };
       root.style.setProperty("--sel", chosen.color);
+      playTone(880, 420, 0.09, "sine", 0.22); /* bottle-select pop */
       if (selCaption) selCaption.textContent = "YOU CHOSE — " + chosen.name.toUpperCase();
       if (tasteNote) tasteNote.textContent = chosen.name + " — watch its colour rise.";
       resetPour();
@@ -232,8 +382,13 @@
     var dt = Math.min(64, t - lastT); lastT = t;
     fill = Math.min(100, fill + dt / 42); /* ~4.2s to full */
     renderPour();
+    setPourLevel(fill / 100); /* pour noise follows the fill */
     if (fill >= 100){
       pouring = false; stream.classList.remove("on");
+      stopPourNoise();
+      playTone(523.25, 523.25, 0.4, "sine", 0.16); /* poured: soft chime */
+      playTone(659.25, 659.25, 0.4, "sine", 0.14, 0.12);
+      playTone(783.99, 783.99, 0.55, "sine", 0.12, 0.24);
       pourBtn.textContent = "POURED ✓"; pourBtn.classList.add("done");
       return;
     }
@@ -242,6 +397,7 @@
   function resetPour(){
     fill = 0; pouring = false;
     if (pourRaf) cancelAnimationFrame(pourRaf);
+    stopPourNoise();
     stream.classList.remove("on"); renderPour();
     if (pourBtn){ pourBtn.textContent = "HOLD TO POUR"; pourBtn.classList.remove("done"); }
   }
@@ -256,11 +412,13 @@
       if (fill >= 100) return;
       pouring = true; lastT = performance.now();
       stream.classList.add("on");
+      setPourLevel(0.05);
       pourRaf = requestAnimationFrame(pourLoop);
     });
     ["pointerup", "pointerleave", "pointercancel"].forEach(function(t){
       pourBtn.addEventListener(t, function(){
         pouring = false; stream.classList.remove("on");
+        stopPourNoise();
         if (pourRaf) cancelAnimationFrame(pourRaf);
       });
     });
