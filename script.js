@@ -212,13 +212,14 @@
         scrub: 0.6,
         onUpdate: function(self){
           if (progress) progress.style.width = (self.progress * 100).toFixed(2) + "%";
-          var idx = Math.min(N - 1, Math.floor(self.progress * N + 0.0001));
-          /* active scene = the one whose segment the playhead sits in */
-          idx = Math.min(N - 1, Math.max(0, Math.round(master.time() - 0.5)));
+          /* derive state from the ScrollTrigger's own progress (the scroll
+             target), not the lagging playhead, so jumps land correctly */
+          var tNow = self.progress * N;
+          var idx = Math.min(N - 1, Math.max(0, Math.round(tNow - 0.5)));
           setLive(idx);
           if (typeof window.__glIndex === "number" && window.__glIndex >= 0){
-            window.__glProgress = Math.min(1, Math.max(0, master.time() - window.__glIndex));
-            window.__glNear = Math.abs(master.time() - (window.__glIndex + 0.5)) < 1.6;
+            window.__glProgress = Math.min(1, Math.max(0, tNow - window.__glIndex));
+            window.__glNear = Math.abs(tNow - (window.__glIndex + 0.5)) < 1.6;
           }
         }
       }
