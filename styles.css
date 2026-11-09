@@ -206,6 +206,10 @@ body{background:#0d0505;color:var(--cream);font-family:'Inter',sans-serif;overfl
 .gravity { background: radial-gradient(1100px 620px at 50% 38%, #3a0f14 0%, #1c0508 55%, var(--ink) 100%); }
 #glCanvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; pointer-events: none; }
 
+/* cellar: Blender GLB bottles scene */
+.cellar { background: radial-gradient(1000px 600px at 50% 42%, #33100f 0%, #1a0508 55%, var(--ink) 100%); }
+#glCanvas2 { position: absolute; inset: 0; width: 100%; height: 100%; display: block; pointer-events: none; }
+
 /* ---------- polish: preloader + custom cursor ---------- */
 #loader { position: fixed; inset: 0; z-index: 200; background: var(--ink);
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px;

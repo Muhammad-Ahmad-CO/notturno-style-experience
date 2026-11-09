@@ -10,6 +10,12 @@
 <link href="https://fonts.googleapis.com/css2?family=Pirata+One&family=Cinzel+Decorative:wght@700;900&family=Archivo+Black&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 <noscript><style>#stage{position:static}#spacer,#dots,#progress,#loader{display:none}.panel{position:relative;opacity:1!important;visibility:visible!important;min-height:100vh}</style></noscript>
+<script type="importmap">
+{ "imports": {
+  "three": "https://unpkg.com/three@0.160.0/build/three.module.min.js",
+  "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+} }
+</script>
 </head>
 <body>
 <div id="loader" aria-hidden="true">
@@ -138,6 +144,15 @@
     <p class="caption reveal">A CATHEDRAL BUILT FOR THE NIGHT</p>
   </section>
 
+  <!-- 10 · CELLAR (Blender GLB bottles, real-time WebGL) -->
+  <section id="cellar" class="panel scene cellar">
+    <canvas id="glCanvas2" aria-hidden="true"></canvas>
+    <div class="caption">
+      <h2>THE CELLAR<br>KEEPS THREE</h2>
+      <p>Modelled in glass and firelight, the three spirits turn slowly in the dark — scroll, and walk closer.</p>
+    </div>
+  </section>
+
   <!-- 10 · COLLECTION -->
   <section id="collection" class="panel scene collection">
     <div class="scene-img dim" data-asset="bottles" role="img" aria-label="The Noctara midnight collection"></div>
@@ -180,5 +195,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.158.0/three.min.js"></script>
 <script src="assets-data.js"></script>
 <script src="script.js"></script>
+<script type="module" src="gl-bottles.js"></script>
 </body>
 </html>
