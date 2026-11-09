@@ -202,6 +202,10 @@ body{background:#0d0505;color:var(--cream);font-family:'Inter',sans-serif;overfl
   background-size: 9px 9px; }
 .wipe.w3 { background: var(--ink); }
 
+/* gravity: real-time WebGL scene */
+.gravity { background: radial-gradient(1100px 620px at 50% 38%, #3a0f14 0%, #1c0508 55%, var(--ink) 100%); }
+#glCanvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; pointer-events: none; }
+
 /* if the GSAP CDN cannot load, script.js adds .no-gsap and the page
    falls back to a plain readable flow (same as the noscript rules) */
 .no-gsap #stage { position: static; }

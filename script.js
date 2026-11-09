@@ -154,7 +154,7 @@
   } catch (e) {}
 
   function layout(){
-    SEG = Math.round(window.innerHeight * 1.3);
+    SEG = Math.round(window.innerHeight * (window.innerWidth < 640 ? 1.02 : 1.3));
     spacer.style.height = ((scenes.length - 1) * SEG + window.innerHeight) + "px";
   }
   layout();
@@ -216,6 +216,10 @@
           /* active scene = the one whose segment the playhead sits in */
           idx = Math.min(N - 1, Math.max(0, Math.round(master.time() - 0.5)));
           setLive(idx);
+          if (typeof window.__glIndex === "number" && window.__glIndex >= 0){
+            window.__glProgress = Math.min(1, Math.max(0, master.time() - window.__glIndex));
+            window.__glNear = Math.abs(master.time() - (window.__glIndex + 0.5)) < 1.6;
+          }
         }
       }
     });
@@ -438,5 +442,75 @@
       s.style.animationDelay = (-Math.random() * 12).toFixed(1) + "s";
       orbs.appendChild(s);
     }
+  }
+
+  /* ================= gravity: real-time WebGL (three.js) =================
+     A real 3D scene built from code only (threejs-scene skill): ACES
+     tone mapping, pixel ratio capped at 2, shared geometry/materials,
+     fog for depth. The master timeline feeds it a local progress value;
+     scroll dollies the camera through the floating ingredients, and
+     rendering pauses while the scene is far from the playhead. */
+  var glCanvas = document.getElementById("glCanvas");
+  window.__glIndex = scenes.findIndex(function(sc){ return sc.id === "gravity"; });
+  window.__glProgress = 0;
+  window.__glNear = false;
+  if (glCanvas && window.THREE){
+    try {
+      var renderer = new THREE.WebGLRenderer({ canvas: glCanvas, antialias: true, alpha: true });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+      if ("outputColorSpace" in renderer && THREE.SRGBColorSpace) renderer.outputColorSpace = THREE.SRGBColorSpace;
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 1.05;
+      var scene3 = new THREE.Scene();
+      scene3.fog = new THREE.FogExp2(0x12060a, 0.028);
+      var camera3 = new THREE.PerspectiveCamera(42, 1, 0.1, 100);
+      camera3.position.set(0, 0, 15);
+      scene3.add(new THREE.AmbientLight(0x8a4a3a, 1.15));
+      var key = new THREE.DirectionalLight(0xfff2d9, 1.6); key.position.set(4, 6, 8); scene3.add(key);
+      var rim = new THREE.DirectionalLight(0xc82924, 1.2); rim.position.set(-6, -3, -4); scene3.add(rim);
+      var group3 = new THREE.Group(); scene3.add(group3);
+      var palette = [0xFBEB7F, 0x97F3AD, 0x72C5F6, 0xC82924, 0xF3F1E9];
+      var geos = [ new THREE.SphereGeometry(0.5, 24, 18), new THREE.IcosahedronGeometry(0.45, 0), new THREE.TorusGeometry(0.42, 0.15, 12, 24) ];
+      var mats = palette.map(function(c){ return new THREE.MeshStandardMaterial({ color: c, roughness: 0.32, metalness: 0.08, emissive: c, emissiveIntensity: 0.24 }); });
+      var floaters = [];
+      for (var fi = 0; fi < 46; fi++){
+        var m3 = new THREE.Mesh(geos[fi % 3], mats[fi % palette.length]);
+        m3.position.set((Math.random() - 0.5) * 17, (Math.random() - 0.5) * 10, (Math.random() - 0.5) * 9 - 1);
+        var s3 = 0.5 + Math.random() * 1.05; m3.scale.set(s3, s3, s3);
+        m3.rotation.set(Math.random() * 3, Math.random() * 3, Math.random() * 3);
+        m3.userData = { y0: m3.position.y, ph: Math.random() * 6.283, rs: (Math.random() - 0.5) * 0.9, fs: 0.5 + Math.random() * 0.8 };
+        group3.add(m3); floaters.push(m3);
+      }
+      function sizeGL(){
+        var w = glCanvas.clientWidth || window.innerWidth, h = glCanvas.clientHeight || window.innerHeight;
+        renderer.setSize(w, h, false);
+        camera3.aspect = w / h; camera3.updateProjectionMatrix();
+      }
+      sizeGL();
+      window.addEventListener("resize", sizeGL);
+      if (!window.gsap || !window.ScrollTrigger){
+        window.__glProgress = 0.5;
+        if ("IntersectionObserver" in window){
+          new IntersectionObserver(function(en){ window.__glNear = en[0].isIntersecting; }).observe(glCanvas);
+        } else { window.__glNear = true; }
+      }
+      var clock3 = new THREE.Clock();
+      (function renderGL(){
+        requestAnimationFrame(renderGL);
+        if (!window.__glNear) return;
+        var t = clock3.getElapsedTime();
+        var p = window.__glProgress || 0;
+        floaters.forEach(function(m){
+          m.position.y = m.userData.y0 + Math.sin(t * m.userData.fs + m.userData.ph) * 0.55;
+          m.rotation.y += 0.014 * m.userData.rs;
+          m.rotation.x += 0.009 * m.userData.rs;
+        });
+        group3.rotation.y = (p - 0.5) * 0.9 + t * 0.02;
+        camera3.position.z = 15.5 - p * 4.5;
+        camera3.position.y = (p - 0.5) * 1.6;
+        camera3.lookAt(0, 0, 0);
+        renderer.render(scene3, camera3);
+      })();
+    } catch (e) { /* WebGL unavailable: the CSS gradient still carries the scene */ }
   }
 })();
