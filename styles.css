@@ -210,6 +210,11 @@ body{background:#0d0505;color:var(--cream);font-family:'Inter',sans-serif;overfl
 .cellar { background: radial-gradient(1000px 600px at 50% 42%, #33100f 0%, #1a0508 55%, var(--ink) 100%); }
 #glCanvas2 { position: absolute; inset: 0; width: 100%; height: 100%; display: block; pointer-events: none; }
 
+/* selection in 3D: Blender bottles under the existing click zones */
+#glCanvas3 { position: absolute; inset: 0; width: 100%; height: 100%; display: block; pointer-events: none; z-index: 1; }
+#selection.has-gl3 { background: radial-gradient(1000px 600px at 50% 42%, #33100f 0%, #1a0508 55%, var(--ink) 100%); }
+#selection.has-gl3 .scene-img { opacity: 0 !important; }
+
 /* ---------- polish: preloader + custom cursor ---------- */
 #loader { position: fixed; inset: 0; z-index: 200; background: var(--ink);
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px;

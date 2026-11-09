@@ -357,17 +357,22 @@
   var selCaption = document.getElementById("selCaption");
   var tasteNote = document.getElementById("tasteNote");
   var chosen = null;
+  function applySel(name, color){
+    chosen = { name: name, color: color };
+    root.style.setProperty("--sel", color);
+    playTone(880, 420, 0.09, "sine", 0.22); /* bottle-select pop */
+    if (selCaption) selCaption.textContent = "YOU CHOSE — " + name.toUpperCase();
+    if (tasteNote) tasteNote.textContent = name + " — watch its colour rise.";
+    window.dispatchEvent(new CustomEvent("noctara-select", { detail: { name: name, color: color } }));
+    resetPour();
+  }
+  window.__setSel = applySel;
   document.querySelectorAll(".zone").forEach(function(z){
     z.style.setProperty("--zc", z.getAttribute("data-color"));
     z.addEventListener("click", function(){
       document.querySelectorAll(".zone").forEach(function(o){ o.classList.remove("selected"); });
       z.classList.add("selected");
-      chosen = { name: z.getAttribute("data-name"), color: z.getAttribute("data-color") };
-      root.style.setProperty("--sel", chosen.color);
-      playTone(880, 420, 0.09, "sine", 0.22); /* bottle-select pop */
-      if (selCaption) selCaption.textContent = "YOU CHOSE — " + chosen.name.toUpperCase();
-      if (tasteNote) tasteNote.textContent = chosen.name + " — watch its colour rise.";
-      resetPour();
+      applySel(z.getAttribute("data-name"), z.getAttribute("data-color"));
     });
   });
 
