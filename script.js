@@ -445,6 +445,70 @@
     }
   }
 
+
+  /* ================= polish: preloader, custom cursor, parallax ================= */
+  var loader = document.getElementById("loader");
+  if (loader){
+    var loaderBar = document.getElementById("loaderBar");
+    var loaderPct = document.getElementById("loaderPct");
+    var lp = { v: 0 }, loadDone = false;
+    var renderLp = function(){
+      var v = Math.round(lp.v);
+      if (loaderBar) loaderBar.style.width = v + "%";
+      if (loaderPct) loaderPct.textContent = v + "%";
+    };
+    var hideLoader = function(){
+      if (window.gsap){
+        gsap.to(loader, { autoAlpha: 0, duration: 0.7, ease: "power2.inOut",
+          onComplete: function(){ if (loader.parentNode) loader.remove(); } });
+      } else {
+        loader.classList.add("hide");
+        setTimeout(function(){ if (loader.parentNode) loader.remove(); }, 700);
+      }
+    };
+    var finishLoad = function(){
+      if (loadDone) return; loadDone = true;
+      if (window.gsap){
+        gsap.to(lp, { v: 100, duration: 0.45, ease: "power1.out", onUpdate: renderLp, onComplete: hideLoader });
+      } else hideLoader();
+    };
+    if (window.gsap){
+      gsap.to(lp, { v: 88, duration: 1.6, ease: "power2.out", onUpdate: renderLp });
+      window.addEventListener("load", finishLoad);
+      setTimeout(finishLoad, 3500);
+    } else hideLoader();
+  }
+
+  if (window.gsap && window.matchMedia && matchMedia("(hover: hover) and (pointer: fine)").matches){
+    var cDot = document.getElementById("cursorDot");
+    var cRing = document.getElementById("cursorRing");
+    if (cDot && cRing){
+      root.classList.add("has-cursor");
+      gsap.set([cDot, cRing], { xPercent: -50, yPercent: -50, x: -100, y: -100 });
+      var dX = gsap.quickTo(cDot, "x", { duration: 0.12, ease: "power2.out" });
+      var dY = gsap.quickTo(cDot, "y", { duration: 0.12, ease: "power2.out" });
+      var rX = gsap.quickTo(cRing, "x", { duration: 0.45, ease: "power3.out" });
+      var rY = gsap.quickTo(cRing, "y", { duration: 0.45, ease: "power3.out" });
+      var cursorShown = false;
+      window.addEventListener("mousemove", function(ev){
+        if (!cursorShown){
+          cursorShown = true;
+          gsap.to([cDot, cRing], { autoAlpha: 1, duration: 0.3 });
+        }
+        dX(ev.clientX); dY(ev.clientY); rX(ev.clientX); rY(ev.clientY);
+        var liveImg = document.querySelector("#stage .panel.live .scene-img");
+        if (liveImg){
+          gsap.to(liveImg, { x: (ev.clientX / window.innerWidth - 0.5) * 14,
+            duration: 0.9, ease: "power2.out", overwrite: "auto" });
+        }
+      });
+      document.querySelectorAll("a, button, .zone, .badge").forEach(function(el){
+        el.addEventListener("mouseenter", function(){ cRing.classList.add("on"); });
+        el.addEventListener("mouseleave", function(){ cRing.classList.remove("on"); });
+      });
+    }
+  }
+
   /* ================= gravity: real-time WebGL (three.js) =================
      A real 3D scene built from code only (threejs-scene skill): ACES
      tone mapping, pixel ratio capped at 2, shared geometry/materials,
